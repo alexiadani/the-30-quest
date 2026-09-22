@@ -81,7 +81,7 @@
         </span>
       </div>
 
-      <!-- Barra de Progresso Diária com Suporte à Estrelinha Dourada -->
+      <!-- Barra de Progresso Diária -->
       <div class="relative w-full bg-quest-bgLight h-3 rounded-full border border-quest-pink2 flex items-center">
         <div id="barra-progresso" class="bg-gradient-to-r from-quest-pink4 to-quest-dark h-full rounded-full w-0 transition-all duration-500 flex items-center justify-end">
           <span id="estrela-perfect" class="hidden transform translate-x-1.5 text-xs animate-bounce select-none">⭐</span>
@@ -189,6 +189,44 @@
 
   </main>
 
+  <!-- Modal de Edição de Dia Passado -->
+  <div id="modal-edit-day" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white border border-quest-pink2 rounded-2xl p-5 w-full max-w-sm shadow-xl space-y-4">
+      <div class="flex justify-between items-center border-b border-quest-pink2/50 pb-2">
+        <h3 class="font-bold text-quest-dark text-sm flex items-center gap-1.5">
+          <i data-lucide="edit-3" class="w-4 h-4"></i> Editar Registro (<span id="modal-date-title"></span>)
+        </h3>
+        <button onclick="closeEditModal()" class="text-quest-textMuted hover:text-quest-dark">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-2 pt-1">
+        <label class="flex items-center justify-between p-2.5 bg-quest-bgLight/50 rounded-xl cursor-pointer">
+          <span class="text-xs font-medium text-quest-textDark">Zero Açúcar (+R$ 1,00)</span>
+          <input type="checkbox" id="modal-task-sugar" class="w-4 h-4 accent-quest-dark rounded">
+        </label>
+        <label class="flex items-center justify-between p-2.5 bg-quest-bgLight/50 rounded-xl cursor-pointer">
+          <span class="text-xs font-medium text-quest-textDark">Zero Glúten & Laticínios (+R$ 2,00)</span>
+          <input type="checkbox" id="modal-task-gluten" class="w-4 h-4 accent-quest-dark rounded">
+        </label>
+        <label class="flex items-center justify-between p-2.5 bg-quest-bgLight/50 rounded-xl cursor-pointer">
+          <span class="text-xs font-medium text-quest-textDark">Alongamento (+R$ 1,00)</span>
+          <input type="checkbox" id="modal-task-stretch" class="w-4 h-4 accent-quest-dark rounded">
+        </label>
+        <label class="flex items-center justify-between p-2.5 bg-quest-bgLight/50 rounded-xl cursor-pointer">
+          <span class="text-xs font-medium text-quest-textDark">Treino (+R$ 1,00)</span>
+          <input type="checkbox" id="modal-task-workout" class="w-4 h-4 accent-quest-dark rounded">
+        </label>
+      </div>
+
+      <div class="flex gap-2 pt-2">
+        <button onclick="closeEditModal()" class="flex-1 py-2 bg-quest-bgLight border border-quest-pink2 text-quest-textMuted text-xs font-bold rounded-xl">Cancelar</button>
+        <button onclick="saveEditDayModal()" class="flex-1 py-2 bg-quest-dark hover:bg-quest-pink4 text-white text-xs font-bold rounded-xl shadow-sm">Salvar</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Lógica JavaScript -->
   <script>
     // Configurações de Hábitos
@@ -196,8 +234,9 @@
     const HABIT_LABELS = { sugar: 'Zero Açúcar', gluten: 'Zero Glúten/Laticínios', stretch: 'Alongamento', workout: 'Treino' };
     const TODAY_KEY = new Date().toISOString().split('T')[0];
 
-    // Estado do Botão de Expandir Histórico
+    // Estado do Botão de Expandir Histórico e Edição
     let showAllHistory = false;
+    let editingDateKey = null;
 
     // Contexto de Áudio Global
     let audioCtx = null;
@@ -229,7 +268,6 @@
           audioCtx.resume();
         }
 
-        // Notas fofas (Dó 5 -> Mí 5 -> Sol 5 -> Dó 6)
         const notes = [523.25, 659.25, 783.99, 1046.50];
         const startTime = audioCtx.currentTime;
 
@@ -237,7 +275,7 @@
           const osc = audioCtx.createOscillator();
           const gain = audioCtx.createGain();
 
-          osc.type = 'sine'; // Timbre suave e fofo
+          osc.type = 'sine';
           osc.frequency.setValueAtTime(freq, startTime + index * 0.08);
 
           gain.gain.setValueAtTime(0.15, startTime + index * 0.08);
@@ -288,7 +326,6 @@
       const todayAfter = appState.historicoDiario[TODAY_KEY];
       const isPerfectNow = todayAfter.sugar && todayAfter.gluten && todayAfter.stretch && todayAfter.workout;
 
-      // Se acabou de completar todas as tarefas do dia = Toca o som fofo e dispara confetes/estrelas!
       if (!wasPerfectBefore && isPerfectNow) {
         playCuteSuccessSound();
         triggerConfetti();
@@ -299,8 +336,49 @@
       updateUI();
     }
 
+    function openEditModal(dateKey) {
+      editingDateKey = dateKey;
+      const [year, month, day] = dateKey.split('-');
+      document.getElementById('modal-date-title').textContent = `${day}/${month}/${year}`;
+
+      const habits = appState.historicoDiario[dateKey] || { sugar: false, gluten: false, stretch: false, workout: false };
+      document.getElementById('modal-task-sugar').checked = habits.sugar || false;
+      document.getElementById('modal-task-gluten').checked = habits.gluten || false;
+      document.getElementById('modal-task-stretch').checked = habits.stretch || false;
+      document.getElementById('modal-task-workout').checked = habits.workout || false;
+
+      document.getElementById('modal-edit-day').classList.remove('hidden');
+    }
+
+    function closeEditModal() {
+      editingDateKey = null;
+      document.getElementById('modal-edit-day').classList.add('hidden');
+    }
+
+    function saveEditDayModal() {
+      if (!editingDateKey) return;
+
+      if (!appState.historicoDiario[editingDateKey]) {
+        appState.historicoDiario[editingDateKey] = { sugar: false, gluten: false, stretch: false, workout: false };
+      }
+
+      appState.historicoDiario[editingDateKey].sugar = document.getElementById('modal-task-sugar').checked;
+      appState.historicoDiario[editingDateKey].gluten = document.getElementById('modal-task-gluten').checked;
+      appState.historicoDiario[editingDateKey].stretch = document.getElementById('modal-task-stretch').checked;
+      appState.historicoDiario[editingDateKey].workout = document.getElementById('modal-task-workout').checked;
+
+      // Se for o dia de hoje sendo editado pelo modal, sincroniza as checkboxes principais
+      if (editingDateKey === TODAY_KEY) {
+        loadTodayState();
+      }
+
+      recalculateBalance();
+      saveState();
+      updateUI();
+      closeEditModal();
+    }
+
     function getPerfectStreakStats() {
-      // Ordena as datas cronologicamente
       const sortedDates = Object.keys(appState.historicoDiario).sort();
       
       let currentStreak = 0;
@@ -404,7 +482,6 @@
 
       document.getElementById('ganho-hoje').textContent = `+ R$ ${todayTotal.toFixed(2).replace('.', ',')}`;
 
-      // Atualiza a Barra de Progresso e Estrela Dourada
       const barra = document.getElementById('barra-progresso');
       const estrela = document.getElementById('estrela-perfect');
 
@@ -487,6 +564,9 @@
             <div class="flex items-center gap-1.5 flex-wrap">
               <span class="font-bold text-quest-textDark">${formattedDate}</span>
               ${isPerfect ? '<span class="bg-amber-100 text-amber-800 text-[10px] font-extrabold px-1.5 py-0.2 rounded-full border border-amber-300 shrink-0">Perfect Day ⭐</span>' : ''}
+              <button onclick="openEditModal('${date}')" class="text-quest-textMuted hover:text-quest-dark p-0.5 rounded transition" title="Editar este dia">
+                <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+              </button>
             </div>
             <p class="text-quest-textMuted leading-tight">${doneHabits.length > 0 ? doneHabits.join(', ') : 'Nenhum hábito cumprido'}</p>
           </div>
