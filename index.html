@@ -11,7 +11,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Canvas Confetti CDN -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
-  <!-- Configuração das Cores Personalizadas no Tailwind (Tema Claro) -->
+  <!-- Configuração das Cores Personalizadas no Tailwind -->
   <script>
     tailwind.config = {
       theme: {
@@ -24,10 +24,10 @@
               pink3: '#E199B3',
               pink4: '#F48AA6',
               pink5: '#F68C9F',
-              bgLight: '#FFF5F7',      /* Fundo claro bem suave */
-              cardLight: '#FFFFFF',    /* Card branco limpo */
+              bgLight: '#FFF5F7',
+              cardLight: '#FFFFFF',
               cardHover: '#FDF0F3',
-              textDark: '#4A1525',     /* Texto escuro em tom bordô para leitura perfeita */
+              textDark: '#4A1525',
               textMuted: '#8C3A52'
             }
           }
@@ -38,13 +38,26 @@
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
-    /* Estilização para barras de rolagem suaves e toque mobile */
     body { -webkit-tap-highlight-color: transparent; }
-    
-    /* Personalização do checkbox no tema claro */
     input[type="checkbox"]:checked {
       background-color: #D72E60;
       border-color: #D72E60;
+    }
+
+    /* Efeito de Raios de Sol / Aura crescendo e encolhendo com fundo claro */
+    @keyframes efeitosan {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(215, 46, 96, 0.5);
+      }
+      50% {
+        transform: scale(1.12);
+        box-shadow: 0 0 0 6px rgba(215, 46, 96, 0);
+      }
+    }
+
+    .efeito-sol-futuro {
+      animation: efeitosan 2s infinite ease-in-out;
     }
   </style>
 </head>
@@ -147,7 +160,6 @@
       <div id="historico-lista" class="space-y-2">
         <!-- Renderizado dinamicamente via JS -->
       </div>
-      <!-- Botão Ver Mais / Ver Menos -->
       <button id="btn-ver-mais" onclick="toggleShowAllHistory()" class="hidden w-full py-2 bg-quest-bgLight hover:bg-quest-cardHover border border-quest-pink1 text-quest-dark text-xs font-bold rounded-xl transition flex items-center justify-center gap-1">
         <span id="btn-ver-mais-texto">Ver mais</span>
         <i id="btn-ver-mais-icone" data-lucide="chevron-down" class="w-4 h-4"></i>
@@ -163,11 +175,38 @@
       <div class="grid grid-cols-1 gap-2.5">
         <div class="flex justify-between items-center p-3 bg-quest-cardLight border border-quest-pink2 rounded-xl shadow-sm">
           <div>
-            <p class="text-sm font-semibold text-quest-textDark"><a href="https://shopee.com.br/Tornozeleira-com-3-Faixas-de-Resist%C3%AAncia-Puxador-Treino-Perna-Gl%C3%BAteos-Fitness-Cross-Over-Polia-Baixa-i.379994163.58264416885?extraParams=%7B%22display_model_id%22%3A209624305882%2C%22model_selection_logic%22%3A3%7D">Tornozeleira com elástico</a></p>
+            <p class="text-sm font-semibold text-quest-textDark"><a href="https://shopee.com.br/Tornozeleira-com-3-Faixas-de-Resist%C3%AAncia-Puxador-Treino-Perna-Gl%C3%BAteos-Fitness-Cross-Over-Polia-Baixa-i.379994163.58264416885?extraParams=%7B%22display_model_id%22%3A209624305882%2C%22model_selection_logic%22%3A3%7D" target="_blank" class="hover:underline">Tornozeleira com elástico</a></p>
             <p class="text-xs text-quest-textMuted">Shopee • R$ 39,99</p>
           </div>
           <button onclick="redeemReward(39.99, 'Tornozeleira com elástico')" class="px-3 py-1.5 bg-quest-dark hover:bg-quest-pink4 active:scale-95 text-xs font-bold text-white rounded-lg transition shadow-sm">Resgatar</button>
         </div>
+      </div>
+    </section>
+
+    <!-- Mapa dos 348 Dias Dividido por Meses (Abaixo da Lista de Prêmios) -->
+    <section class="bg-quest-cardLight border border-quest-pink2 rounded-2xl p-4 shadow-sm space-y-3">
+      <div class="flex justify-between items-center">
+        <div>
+          <h2 class="font-bold text-quest-textDark flex items-center gap-2">
+            <i data-lucide="sparkles" class="w-4 h-4 text-quest-dark"></i> Jornada Rumo aos 30
+          </h2>
+          <p class="text-[11px] text-quest-textMuted">22/09/2026 ➔ 06/09/2027 🎂👑</p>
+        </div>
+        <span id="trilha-progresso-texto" class="text-xs font-bold text-quest-dark bg-quest-bgLight px-2.5 py-1 rounded-lg border border-quest-pink2">
+          0/348 Dias
+        </span>
+      </div>
+
+      <!-- Container Scrollável dos Blocos Mensais -->
+      <div id="mosaico-meses-container" class="space-y-4 max-h-[380px] overflow-y-auto pr-1">
+        <!-- Renderizado dinamicamente via JS -->
+      </div>
+
+      <!-- Legenda Explicativa -->
+      <div class="flex justify-around items-center text-[10px] text-quest-textMuted pt-2 border-t border-quest-pink2/40">
+        <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-400 border border-amber-500 inline-block"></span> Perfect ⭐</span>
+        <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-quest-dark inline-block"></span> Feito 💗</span>
+        <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-quest-pink2 border border-quest-dark inline-block efeito-sol-futuro"></span> Futuro ☀️</span>
       </div>
     </section>
 
@@ -227,31 +266,31 @@
     </div>
   </div>
 
-  <!-- Lógica JavaScript -->
+  <!-- Lógica JavaScript Corrigida -->
   <script>
-    // Configurações de Hábitos
     const HABIT_VALUES = { sugar: 1.0, gluten: 2.0, stretch: 1.0, workout: 1.0 };
     const HABIT_LABELS = { sugar: 'Zero Açúcar', gluten: 'Zero Glúten/Laticínios', stretch: 'Alongamento', workout: 'Treino' };
     const TODAY_KEY = new Date().toISOString().split('T')[0];
+    
+    // Configuração oficial da Jornada: 22/09/2026 até 06/09/2027
+    const START_DATE = new Date('2026-09-22T00:00:00');
+    const END_DATE = new Date('2027-09-06T00:00:00');
+    const TARGET_BIRTHDAY_KEY = '2027-09-06';
 
-    // Estado do Botão de Expandir Histórico e Edição
     let showAllHistory = false;
     let editingDateKey = null;
-
-    // Contexto de Áudio Global
     let audioCtx = null;
 
-    // Estado da Aplicação
     let appState = JSON.parse(localStorage.getItem('the30quest_state')) || {
       saldoTotal: 0.0,
       historicoDiario: {},
       resgates: []
     };
 
-    // Inicialização
     document.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
       loadTodayState();
+      recalculateBalance();
       updateUI();
     });
 
@@ -260,13 +299,8 @@
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         if (!AudioContext) return;
 
-        if (!audioCtx) {
-          audioCtx = new AudioContext();
-        }
-
-        if (audioCtx.state === 'suspended') {
-          audioCtx.resume();
-        }
+        if (!audioCtx) audioCtx = new AudioContext();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
 
         const notes = [523.25, 659.25, 783.99, 1046.50];
         const startTime = audioCtx.currentTime;
@@ -367,7 +401,6 @@
       appState.historicoDiario[editingDateKey].stretch = document.getElementById('modal-task-stretch').checked;
       appState.historicoDiario[editingDateKey].workout = document.getElementById('modal-task-workout').checked;
 
-      // Se for o dia de hoje sendo editado pelo modal, sincroniza as checkboxes principais
       if (editingDateKey === TODAY_KEY) {
         loadTodayState();
       }
@@ -378,50 +411,66 @@
       closeEditModal();
     }
 
+    // Algoritmo de Cálculo Preciso da Sequência (Perfect Week) e Bônus
     function getPerfectStreakStats() {
-      const sortedDates = Object.keys(appState.historicoDiario).sort();
-      
-      let currentStreak = 0;
-      let perfectWeekBonuses = 0;
-      let prevDate = null;
+      const dates = Object.keys(appState.historicoDiario).sort();
+      if (dates.length === 0) return { currentStreak: 0, perfectWeekBonuses: 0.0 };
 
-      sortedDates.forEach(dateStr => {
+      let perfectWeekBonuses = 0.0;
+      let runningStreak = 0;
+
+      // Percorre cronologicamente todas as datas registradas no histórico
+      dates.forEach((dateStr) => {
         const habits = appState.historicoDiario[dateStr];
-        const isPerfect = habits.sugar && habits.gluten && habits.stretch && habits.workout;
+        const isPerfect = habits && habits.sugar && habits.gluten && habits.stretch && habits.workout;
 
         if (isPerfect) {
-          if (prevDate === null) {
-            currentStreak = 1;
-          } else {
-            const prev = new Date(prevDate + 'T00:00:00');
-            const curr = new Date(dateStr + 'T00:00:00');
-            const diffDays = Math.round((curr - prev) / (1000 * 60 * 60 * 24));
-
-            if (diffDays === 1) {
-              currentStreak++;
-            } else {
-              currentStreak = 1;
-            }
-          }
-
-          if (currentStreak === 5) {
+          runningStreak++;
+          // Ao completar 5 dias seguidos, ganha +R$ 5,00 e reseta a contagem
+          if (runningStreak === 5) {
             perfectWeekBonuses += 5.0;
-            currentStreak = 0;
+            runningStreak = 0;
           }
-
-          prevDate = dateStr;
         } else {
-          currentStreak = 0;
-          prevDate = dateStr;
+          // Se o dia não for perfeito, quebra a sequência
+          runningStreak = 0;
         }
       });
 
-      return { currentStreak, perfectWeekBonuses };
+      // Validação da sequência ATUAL em relação ao dia de HOJE:
+      // Se a sequência não engloba o dia de hoje ou o dia de ontem, ela zerou para a exibição atual
+      let activeCurrentStreak = 0;
+      let checkCursor = new Date(TODAY_KEY + 'T00:00:00');
+
+      while (true) {
+        const key = checkCursor.toISOString().split('T')[0];
+        const habits = appState.historicoDiario[key];
+        const isPerfect = habits && habits.sugar && habits.gluten && habits.stretch && habits.workout;
+
+        if (isPerfect) {
+          activeCurrentStreak++;
+          if (activeCurrentStreak === 5) {
+            // Se hoje completou 5, mostra 5 no card antes de resetar no dia seguinte
+            break;
+          }
+          checkCursor.setDate(checkCursor.getDate() - 1);
+        } else {
+          // Se hoje não está completo, mas ontem estava, mantemos a sequência de ontem ativa
+          if (key === TODAY_KEY) {
+            checkCursor.setDate(checkCursor.getDate() - 1);
+            continue;
+          }
+          break;
+        }
+      }
+
+      return { currentStreak: activeCurrentStreak, perfectWeekBonuses };
     }
 
     function recalculateBalance() {
       let total = 0.0;
 
+      // Soma os ganhos diários
       Object.entries(appState.historicoDiario).forEach(([date, habits]) => {
         let dayEarnings = 0.0;
         if (habits.sugar) dayEarnings += HABIT_VALUES.sugar;
@@ -429,6 +478,7 @@
         if (habits.stretch) dayEarnings += HABIT_VALUES.stretch;
         if (habits.workout) dayEarnings += HABIT_VALUES.workout;
 
+        // Se cumpriu os 4 hábitos, o ganho fixo do dia é R$ 5,00
         if (habits.sugar && habits.gluten && habits.stretch && habits.workout) {
           dayEarnings = 5.0;
         }
@@ -436,11 +486,13 @@
         total += dayEarnings;
       });
 
+      // Soma os bônus de sequências acumuladas de 5 dias perfeitos
       const { perfectWeekBonuses } = getPerfectStreakStats();
       total += perfectWeekBonuses;
 
-      const totalResgatado = appState.resgates.reduce((acc, curr) => acc + curr.valor, 0);
-      appState.saldoTotal = total - totalResgatado;
+      // Subtrai os prêmios resgatados
+      const totalResgatado = (appState.resgates || []).reduce((acc, curr) => acc + (curr.valor || 0), 0);
+      appState.saldoTotal = Math.max(0, total - totalResgatado);
     }
 
     function redeemReward(valor, nome) {
@@ -450,6 +502,7 @@
       }
 
       if (confirm(`Deseja resgatar "${nome}" por R$ ${valor.toFixed(2)}?`)) {
+        if (!appState.resgates) appState.resgates = [];
         appState.resgates.push({ nome, valor, data: new Date().toISOString() });
         recalculateBalance();
         saveState();
@@ -498,8 +551,119 @@
       const { currentStreak } = getPerfectStreakStats();
       document.getElementById('perfect-days-count').textContent = `${currentStreak}/5`;
 
+      renderMonthsMosaic();
       renderHistory();
       lucide.createIcons();
+    }
+
+    function renderMonthsMosaic() {
+      const container = document.getElementById('mosaico-meses-container');
+      container.innerHTML = '';
+
+      let currentCursor = new Date(START_DATE);
+      let dayCounter = 1;
+      let completedDaysCount = 0;
+      let totalJourneyDaysCount = 0;
+
+      const monthsData = {};
+
+      while (currentCursor <= END_DATE) {
+        const dateKey = currentCursor.toISOString().split('T')[0];
+        
+        const monthShort = currentCursor.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '').toLowerCase();
+        const yearShort = currentCursor.toLocaleDateString('pt-BR', { year: '2-digit' });
+        const monthLabel = `${monthShort} de ${yearShort}`;
+
+        if (!monthsData[monthLabel]) {
+          monthsData[monthLabel] = [];
+        }
+
+        monthsData[monthLabel].push({
+          dateKey,
+          dayNumber: currentCursor.getDate(),
+          journeyDayNum: dayCounter
+        });
+
+        currentCursor.setDate(currentCursor.getDate() + 1);
+        dayCounter++;
+        totalJourneyDaysCount++;
+      }
+
+      Object.entries(monthsData).forEach(([monthLabel, daysList]) => {
+        const monthCard = document.createElement('div');
+        monthCard.className = "bg-white border border-quest-pink2/70 rounded-xl p-3 space-y-2 shadow-2xs";
+
+        const monthHeader = document.createElement('div');
+        monthHeader.className = "flex justify-between items-center border-b border-quest-pink2/40 pb-1";
+        monthHeader.innerHTML = `
+          <span class="text-xs font-bold text-quest-dark lowercase flex items-center gap-1">
+            <i data-lucide="calendar-days" class="w-3.5 h-3.5"></i> ${monthLabel}
+          </span>
+          <span class="text-[10px] text-quest-textMuted font-medium">Dias ${daysList[0].journeyDayNum}–${daysList[daysList.length - 1].journeyDayNum}</span>
+        `;
+        monthCard.appendChild(monthHeader);
+
+        const grid = document.createElement('div');
+        grid.className = "grid grid-cols-7 gap-1.5 pt-1 justify-items-center";
+
+        daysList.forEach(dayItem => {
+          const habits = appState.historicoDiario[dayItem.dateKey];
+          const isToday = dayItem.dateKey === TODAY_KEY;
+          const isBirthday = dayItem.dateKey === TARGET_BIRTHDAY_KEY;
+          const isPast = dayItem.dateKey <= TODAY_KEY;
+
+          let btn = document.createElement('button');
+          btn.className = "w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-200 active:scale-95 border ";
+
+          if (isBirthday) {
+            btn.innerHTML = "👑";
+            btn.title = "06/09/2027: Meus 30 Anos!";
+            btn.className += "bg-gradient-to-tr from-amber-300 to-amber-400 border-amber-500 text-amber-900 animate-bounce shadow-md ring-2 ring-amber-400/80 ring-offset-1";
+          } else if (habits) {
+            const count = (habits.sugar ? 1 : 0) + (habits.gluten ? 1 : 0) + (habits.stretch ? 1 : 0) + (habits.workout ? 1 : 0);
+            btn.onclick = () => openEditModal(dayItem.dateKey);
+
+            if (count === 4) {
+              btn.className += "bg-amber-400 border-amber-500 text-white shadow-xs";
+              btn.innerHTML = "⭐";
+              btn.title = `${dayItem.dateKey}: Perfect Day!`;
+              completedDaysCount++;
+            } else if (count > 0) {
+              btn.className += "bg-quest-dark border-quest-pink3 text-white shadow-xs";
+              btn.innerHTML = dayItem.dayNumber;
+              btn.title = `${dayItem.dateKey}: Concluído (${count}/4)`;
+              completedDaysCount++;
+            } else {
+              btn.className += "bg-gray-200 border-gray-300 text-gray-500";
+              btn.innerHTML = dayItem.dayNumber;
+              btn.title = `${dayItem.dateKey}: Sem missões registradas`;
+            }
+          } else if (isPast) {
+            btn.onclick = () => openEditModal(dayItem.dateKey);
+            btn.className += "bg-quest-bgLight border-dashed border-quest-pink3/70 text-quest-textMuted/70 hover:border-quest-dark hover:text-quest-dark";
+            btn.innerHTML = dayItem.dayNumber;
+            btn.title = `${dayItem.dateKey}: Clique para registrar`;
+          } else {
+            // Dia Futuro: Fundo rosa pastel claro suave com borda bordô vibrante + Efeito de Sol
+            btn.onclick = () => openEditModal(dayItem.dateKey);
+            btn.className += "bg-quest-pink2/60 border-quest-dark text-quest-dark font-extrabold efeito-sol-futuro shadow-2xs hover:bg-quest-dark hover:text-white";
+            btn.innerHTML = dayItem.dayNumber;
+            btn.title = `${dayItem.dateKey}: Dia futuro`;
+          }
+
+          if (isToday) {
+            btn.className += " ring-2 ring-quest-dark ring-offset-1 font-black scale-105";
+          }
+
+          grid.appendChild(btn);
+        });
+
+        monthCard.appendChild(grid);
+        container.appendChild(monthCard);
+      });
+
+      const pct = ((completedDaysCount / totalJourneyDaysCount) * 100).toFixed(1);
+      document.getElementById('trilha-progresso-texto').textContent = `${completedDaysCount}/${totalJourneyDaysCount} Dias (${pct}%)`;
     }
 
     function toggleShowAllHistory() {
