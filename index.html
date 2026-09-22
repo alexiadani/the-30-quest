@@ -9,6 +9,8 @@
   <link rel="icon" type="image/png" sizes="32x32" href="icon.png?v=3">
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
   <!-- Configuração das Cores Personalizadas no Tailwind (Tema Claro) -->
   <script>
     tailwind.config = {
@@ -79,9 +81,11 @@
         </span>
       </div>
 
-      <!-- Barra de Progresso Diária -->
-      <div class="w-full bg-quest-bgLight h-2.5 rounded-full overflow-hidden border border-quest-pink2">
-        <div id="barra-progresso" class="bg-gradient-to-r from-quest-pink4 to-quest-dark h-full w-0 transition-all duration-500"></div>
+      <!-- Barra de Progresso Diária com Suporte à Estrelinha Dourada -->
+      <div class="relative w-full bg-quest-bgLight h-3 rounded-full border border-quest-pink2 flex items-center">
+        <div id="barra-progresso" class="bg-gradient-to-r from-quest-pink4 to-quest-dark h-full rounded-full w-0 transition-all duration-500 flex items-center justify-end">
+          <span id="estrela-perfect" class="hidden transform translate-x-1.5 text-xs animate-bounce select-none">⭐</span>
+        </div>
       </div>
 
       <!-- Lista de Checkboxes de Hábitos -->
@@ -195,6 +199,9 @@
     // Estado do Botão de Expandir Histórico
     let showAllHistory = false;
 
+    // Contexto de Áudio Global
+    let audioCtx = null;
+
     // Estado da Aplicação
     let appState = JSON.parse(localStorage.getItem('the30quest_state')) || {
       saldoTotal: 0.0,
@@ -213,15 +220,22 @@
       try {
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         if (!AudioContext) return;
-        const ctx = new AudioContext();
+
+        if (!audioCtx) {
+          audioCtx = new AudioContext();
+        }
+
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
 
         // Notas fofas (Dó 5 -> Mí 5 -> Sol 5 -> Dó 6)
         const notes = [523.25, 659.25, 783.99, 1046.50];
-        const startTime = ctx.currentTime;
+        const startTime = audioCtx.currentTime;
 
         notes.forEach((freq, index) => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
 
           osc.type = 'sine'; // Timbre suave e fofo
           osc.frequency.setValueAtTime(freq, startTime + index * 0.08);
@@ -230,13 +244,26 @@
           gain.gain.exponentialRampToValueAtTime(0.001, startTime + index * 0.08 + 0.2);
 
           osc.connect(gain);
-          gain.connect(ctx.destination);
+          gain.connect(audioCtx.destination);
 
           osc.start(startTime + index * 0.08);
           osc.stop(startTime + index * 0.08 + 0.2);
         });
       } catch (e) {
         console.log('AudioContext Error:', e);
+      }
+    }
+
+    function triggerConfetti() {
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 80,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#F79FC3', '#D72E60', '#FBBF24', '#F59E0B'],
+          shapes: ['star', 'circle'],
+          scalar: 1.2
+        });
       }
     }
 
@@ -261,9 +288,10 @@
       const todayAfter = appState.historicoDiario[TODAY_KEY];
       const isPerfectNow = todayAfter.sugar && todayAfter.gluten && todayAfter.stretch && todayAfter.workout;
 
-      // Se acabou de completar todas as tarefas do dia = Toca o som fofo!
+      // Se acabou de completar todas as tarefas do dia = Toca o som fofo e dispara confetes/estrelas!
       if (!wasPerfectBefore && isPerfectNow) {
         playCuteSuccessSound();
+        triggerConfetti();
       }
 
       recalculateBalance();
@@ -371,10 +399,24 @@
         }
       });
 
-      if (countChecked === 4) todayTotal = 5.0;
+      const isPerfectDay = countChecked === 4;
+      if (isPerfectDay) todayTotal = 5.0;
 
       document.getElementById('ganho-hoje').textContent = `+ R$ ${todayTotal.toFixed(2).replace('.', ',')}`;
-      document.getElementById('barra-progresso').style.width = `${(countChecked / 4) * 100}%`;
+
+      // Atualiza a Barra de Progresso e Estrela Dourada
+      const barra = document.getElementById('barra-progresso');
+      const estrela = document.getElementById('estrela-perfect');
+
+      barra.style.width = `${(countChecked / 4) * 100}%`;
+
+      if (isPerfectDay) {
+        barra.className = "bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 h-full rounded-full transition-all duration-500 flex items-center justify-end shadow-sm shadow-amber-200/60";
+        estrela.classList.remove('hidden');
+      } else {
+        barra.className = "bg-gradient-to-r from-quest-pink4 to-quest-dark h-full rounded-full transition-all duration-500 flex items-center justify-end";
+        estrela.classList.add('hidden');
+      }
 
       const { currentStreak } = getPerfectStreakStats();
       document.getElementById('perfect-days-count').textContent = `${currentStreak}/5`;
