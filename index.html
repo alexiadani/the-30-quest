@@ -181,7 +181,7 @@
           <button onclick="redeemReward(39.99, 'Tornozeleira com elástico')" class="px-3 py-1.5 bg-quest-dark hover:bg-quest-pink4 active:scale-95 text-xs font-bold text-white rounded-lg transition shadow-sm">Resgatar</button>
         </div>
 
-	<div class="flex justify-between items-center p-3 bg-quest-cardLight border border-quest-pink2 rounded-xl shadow-sm">
+        <div class="flex justify-between items-center p-3 bg-quest-cardLight border border-quest-pink2 rounded-xl shadow-sm">
           <div>
             <p class="text-sm font-semibold"><a href="https://shopee.com.br/Kit-2-Step-Academia-40x30x10-Duplo-Fitness-Agachamento-Circuito-Reabilita%C3%A7%C3%A3o-Resistente-Leve-EVA-i.1754153687.58255477738?extraParams=%7B%22display_model_id%22%3A159790403396%2C%22model_selection_logic%22%3A3%7D" target="_blank" class="hover:underline">Kit 2 Step</a></p>
             <p class="text-xs text-quest-textMuted">Shopee • R$ 79,99</p>
@@ -189,18 +189,17 @@
           <button onclick="redeemReward(79.99, 'Kit 2 Step')" class="px-3 py-1.5 bg-quest-dark hover:bg-quest-pink4 active:scale-95 text-xs font-bold text-white rounded-lg transition shadow-sm">Resgatar</button>
         </div>
 
-	<div class="flex justify-between items-center p-3 bg-quest-cardLight border border-quest-pink2 rounded-xl shadow-sm">
+        <div class="flex justify-between items-center p-3 bg-quest-cardLight border border-quest-pink2 rounded-xl shadow-sm">
           <div>
             <p class="text-sm font-semibold"><a href="https://www.lojakamaleaocolor.com.br/produtos/mascara-pigmentante-kamaleao-color-medusa-150ml/" target="_blank" class="hover:underline">Máscara Pigmentante - Medusa</a></p>
             <p class="text-xs text-quest-textMuted">Kamaleão • R$ 89,17</p>
           </div>
           <button onclick="redeemReward(87.17, 'Kamaleão')" class="px-3 py-1.5 bg-quest-dark hover:bg-quest-pink4 active:scale-95 text-xs font-bold text-white rounded-lg transition shadow-sm">Resgatar</button>
         </div>
-
       </div>
     </section>
 
-    <!-- Mapa dos 348 Dias Dividido por Meses (Abaixo da Lista de Prêmios) -->
+    <!-- Mapa dos 348 Dias Dividido por Meses -->
     <section class="bg-quest-cardLight border border-quest-pink2 rounded-2xl p-4 shadow-sm space-y-3">
       <div class="flex justify-between items-center">
         <div>
@@ -220,10 +219,17 @@
       </div>
 
       <!-- Legenda Explicativa -->
-      <div class="flex justify-around items-center text-[10px] text-quest-textMuted pt-2 border-t border-quest-pink2/40">
+      <div class="flex flex-wrap justify-around items-center gap-y-1.5 text-[10px] text-quest-textMuted pt-2 border-t border-quest-pink2/40">
         <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-400 border border-amber-500 inline-block"></span> Perfect ⭐</span>
         <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-quest-dark inline-block"></span> Feito 💗</span>
         <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-quest-pink2 border border-quest-dark inline-block efeito-sol-futuro"></span> Futuro ☀️</span>
+        <span class="flex items-center gap-1">
+          <span class="flex flex-col items-center justify-center">
+            <span class="w-2.5 h-2.5 rounded-full bg-quest-dark inline-block"></span>
+            <span class="w-2 h-0.5 bg-quest-dark rounded-full mt-0.5"></span>
+          </span>
+          Peso Medido ⚖️
+        </span>
       </div>
     </section>
 
@@ -245,7 +251,7 @@
 
   </main>
 
-  <!-- Modal de Edição de Dia Passado -->
+  <!-- Modal de Edição de Dia Passado / Registro de Peso -->
   <div id="modal-edit-day" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white border border-quest-pink2 rounded-2xl p-5 w-full max-w-sm shadow-xl space-y-4">
       <div class="flex justify-between items-center border-b border-quest-pink2/50 pb-2">
@@ -274,6 +280,14 @@
           <span class="text-xs font-medium text-quest-textDark">Treino (+R$ 1,00)</span>
           <input type="checkbox" id="modal-task-workout" class="w-4 h-4 accent-quest-dark rounded">
         </label>
+
+        <!-- Campo de Registro de Peso -->
+        <div class="p-2.5 bg-quest-bgLight/70 border border-quest-pink2/60 rounded-xl flex items-center justify-between gap-2 mt-3">
+          <label for="modal-weight-input" class="text-xs font-bold text-quest-textDark flex items-center gap-1.5">
+            <i data-lucide="scale" class="w-4 h-4 text-quest-dark"></i> Peso do dia (kg):
+          </label>
+          <input type="number" id="modal-weight-input" step="0.1" min="30" max="200" placeholder="ex: 60.5" class="w-24 px-2 py-1 bg-white border border-quest-pink2 rounded-lg text-xs font-bold text-right focus:outline-none focus:ring-1 focus:ring-quest-dark">
+        </div>
       </div>
 
       <div class="flex gap-2 pt-2">
@@ -358,7 +372,7 @@
     }
 
     function loadTodayState() {
-      const todayData = appState.historicoDiario[TODAY_KEY] || { sugar: false, gluten: false, stretch: false, workout: false };
+      const todayData = appState.historicoDiario[TODAY_KEY] || { sugar: false, gluten: false, stretch: false, workout: false, peso: null };
       Object.keys(HABIT_VALUES).forEach(habit => {
         document.getElementById(`task-${habit}`).checked = todayData[habit] || false;
       });
@@ -366,7 +380,7 @@
 
     function toggleHabit(habit) {
       if (!appState.historicoDiario[TODAY_KEY]) {
-        appState.historicoDiario[TODAY_KEY] = { sugar: false, gluten: false, stretch: false, workout: false };
+        appState.historicoDiario[TODAY_KEY] = { sugar: false, gluten: false, stretch: false, workout: false, peso: null };
       }
 
       const todayBefore = { ...appState.historicoDiario[TODAY_KEY] };
@@ -393,11 +407,12 @@
       const [year, month, day] = dateKey.split('-');
       document.getElementById('modal-date-title').textContent = `${day}/${month}/${year}`;
 
-      const habits = appState.historicoDiario[dateKey] || { sugar: false, gluten: false, stretch: false, workout: false };
+      const habits = appState.historicoDiario[dateKey] || { sugar: false, gluten: false, stretch: false, workout: false, peso: null };
       document.getElementById('modal-task-sugar').checked = habits.sugar || false;
       document.getElementById('modal-task-gluten').checked = habits.gluten || false;
       document.getElementById('modal-task-stretch').checked = habits.stretch || false;
       document.getElementById('modal-task-workout').checked = habits.workout || false;
+      document.getElementById('modal-weight-input').value = habits.peso || '';
 
       document.getElementById('modal-edit-day').classList.remove('hidden');
     }
@@ -411,13 +426,16 @@
       if (!editingDateKey) return;
 
       if (!appState.historicoDiario[editingDateKey]) {
-        appState.historicoDiario[editingDateKey] = { sugar: false, gluten: false, stretch: false, workout: false };
+        appState.historicoDiario[editingDateKey] = { sugar: false, gluten: false, stretch: false, workout: false, peso: null };
       }
 
       appState.historicoDiario[editingDateKey].sugar = document.getElementById('modal-task-sugar').checked;
       appState.historicoDiario[editingDateKey].gluten = document.getElementById('modal-task-gluten').checked;
       appState.historicoDiario[editingDateKey].stretch = document.getElementById('modal-task-stretch').checked;
       appState.historicoDiario[editingDateKey].workout = document.getElementById('modal-task-workout').checked;
+      
+      const weightVal = parseFloat(document.getElementById('modal-weight-input').value);
+      appState.historicoDiario[editingDateKey].peso = (!isNaN(weightVal) && weightVal > 0) ? weightVal : null;
 
       if (editingDateKey === TODAY_KEY) {
         loadTodayState();
@@ -437,26 +455,21 @@
       let perfectWeekBonuses = 0.0;
       let runningStreak = 0;
 
-      // Percorre cronologicamente todas as datas registradas no histórico
       dates.forEach((dateStr) => {
         const habits = appState.historicoDiario[dateStr];
         const isPerfect = habits && habits.sugar && habits.gluten && habits.stretch && habits.workout;
 
         if (isPerfect) {
           runningStreak++;
-          // Ao completar 5 dias seguidos, ganha +R$ 5,00 e reseta a contagem
           if (runningStreak === 5) {
             perfectWeekBonuses += 5.0;
             runningStreak = 0;
           }
         } else {
-          // Se o dia não for perfeito, quebra a sequência
           runningStreak = 0;
         }
       });
 
-      // Validação da sequência ATUAL em relação ao dia de HOJE:
-      // Se a sequência não engloba o dia de hoje ou o dia de ontem, ela zerou para a exibição atual
       let activeCurrentStreak = 0;
       let checkCursor = new Date(TODAY_KEY + 'T00:00:00');
 
@@ -468,12 +481,10 @@
         if (isPerfect) {
           activeCurrentStreak++;
           if (activeCurrentStreak === 5) {
-            // Se hoje completou 5, mostra 5 no card antes de resetar no dia seguinte
             break;
           }
           checkCursor.setDate(checkCursor.getDate() - 1);
         } else {
-          // Se hoje não está completo, mas ontem estava, mantemos a sequência de ontem ativa
           if (key === TODAY_KEY) {
             checkCursor.setDate(checkCursor.getDate() - 1);
             continue;
@@ -488,7 +499,6 @@
     function recalculateBalance() {
       let total = 0.0;
 
-      // Soma os ganhos diários
       Object.entries(appState.historicoDiario).forEach(([date, habits]) => {
         let dayEarnings = 0.0;
         if (habits.sugar) dayEarnings += HABIT_VALUES.sugar;
@@ -496,7 +506,6 @@
         if (habits.stretch) dayEarnings += HABIT_VALUES.stretch;
         if (habits.workout) dayEarnings += HABIT_VALUES.workout;
 
-        // Se cumpriu os 4 hábitos, o ganho fixo do dia é R$ 5,00
         if (habits.sugar && habits.gluten && habits.stretch && habits.workout) {
           dayEarnings = 5.0;
         }
@@ -504,11 +513,9 @@
         total += dayEarnings;
       });
 
-      // Soma os bônus de sequências acumuladas de 5 dias perfeitos
       const { perfectWeekBonuses } = getPerfectStreakStats();
       total += perfectWeekBonuses;
 
-      // Subtrai os prêmios resgatados
       const totalResgatado = (appState.resgates || []).reduce((acc, curr) => acc + (curr.valor || 0), 0);
       appState.saldoTotal = Math.max(0, total - totalResgatado);
     }
@@ -629,13 +636,20 @@
           const isToday = dayItem.dateKey === TODAY_KEY;
           const isBirthday = dayItem.dateKey === TARGET_BIRTHDAY_KEY;
           const isPast = dayItem.dateKey <= TODAY_KEY;
+          const hasWeight = habits && habits.peso !== null && habits.peso !== undefined && habits.peso > 0;
+
+          // Contêiner wrapper flexível para alinhar a bolinha e o traço de peso logo abaixo
+          const wrapper = document.createElement('div');
+          wrapper.className = "flex flex-col items-center justify-start h-8 w-7";
 
           let btn = document.createElement('button');
-          btn.className = "w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-200 active:scale-95 border ";
+          btn.className = "w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-200 active:scale-95 border shrink-0 ";
+
+          const weightInfoText = hasWeight ? ` - Peso: ${habits.peso}kg` : '';
 
           if (isBirthday) {
             btn.innerHTML = "👑";
-            btn.title = "06/09/2027: Meus 30 Anos!";
+            btn.title = `06/09/2027: Meus 30 Anos!${weightInfoText}`;
             btn.className += "bg-gradient-to-tr from-amber-300 to-amber-400 border-amber-500 text-amber-900 animate-bounce shadow-md ring-2 ring-amber-400/80 ring-offset-1";
           } else if (habits) {
             const count = (habits.sugar ? 1 : 0) + (habits.gluten ? 1 : 0) + (habits.stretch ? 1 : 0) + (habits.workout ? 1 : 0);
@@ -644,36 +658,46 @@
             if (count === 4) {
               btn.className += "bg-amber-400 border-amber-500 text-white shadow-xs";
               btn.innerHTML = "⭐";
-              btn.title = `${dayItem.dateKey}: Perfect Day!`;
+              btn.title = `${dayItem.dateKey}: Perfect Day!${weightInfoText}`;
               completedDaysCount++;
             } else if (count > 0) {
               btn.className += "bg-quest-dark border-quest-pink3 text-white shadow-xs";
               btn.innerHTML = dayItem.dayNumber;
-              btn.title = `${dayItem.dateKey}: Concluído (${count}/4)`;
+              btn.title = `${dayItem.dateKey}: Concluído (${count}/4)${weightInfoText}`;
               completedDaysCount++;
             } else {
               btn.className += "bg-gray-200 border-gray-300 text-gray-500";
               btn.innerHTML = dayItem.dayNumber;
-              btn.title = `${dayItem.dateKey}: Sem missões registradas`;
+              btn.title = `${dayItem.dateKey}: Sem missões registradas${weightInfoText}`;
             }
           } else if (isPast) {
             btn.onclick = () => openEditModal(dayItem.dateKey);
             btn.className += "bg-quest-bgLight border-dashed border-quest-pink3/70 text-quest-textMuted/70 hover:border-quest-dark hover:text-quest-dark";
             btn.innerHTML = dayItem.dayNumber;
-            btn.title = `${dayItem.dateKey}: Clique para registrar`;
+            btn.title = `${dayItem.dateKey}: Clique para registrar${weightInfoText}`;
           } else {
-            // Dia Futuro: Fundo rosa pastel claro suave com borda bordô vibrante + Efeito de Sol
+            // Dia Futuro
             btn.onclick = () => openEditModal(dayItem.dateKey);
             btn.className += "bg-quest-pink2/60 border-quest-dark text-quest-dark font-extrabold efeito-sol-futuro shadow-2xs hover:bg-quest-dark hover:text-white";
             btn.innerHTML = dayItem.dayNumber;
-            btn.title = `${dayItem.dateKey}: Dia futuro`;
+            btn.title = `${dayItem.dateKey}: Dia futuro${weightInfoText}`;
           }
 
           if (isToday) {
             btn.className += " ring-2 ring-quest-dark ring-offset-1 font-black scale-105";
           }
 
-          grid.appendChild(btn);
+          wrapper.appendChild(btn);
+
+          // Barrinha traço horizontal logo abaixo da bolinha quando há peso registrado
+          if (hasWeight) {
+            const bar = document.createElement('span');
+            bar.className = "w-3.5 h-0.5 bg-quest-dark rounded-full mt-0.5 shrink-0";
+            bar.title = `Peso: ${habits.peso}kg`;
+            wrapper.appendChild(bar);
+          }
+
+          grid.appendChild(wrapper);
         });
 
         monthCard.appendChild(grid);
@@ -739,6 +763,8 @@
         const isPerfect = doneHabits.length === 4;
         if (isPerfect) dayEarnings = 5.0;
 
+        const weightTag = (habits.peso && habits.peso > 0) ? `<span class="bg-quest-bgLight text-quest-dark text-[10px] font-extrabold px-1.5 py-0.2 rounded-full border border-quest-pink2 shrink-0">⚖️ ${habits.peso} kg</span>` : '';
+
         const card = document.createElement('div');
         card.className = 'p-3 bg-quest-cardLight border border-quest-pink2 rounded-xl shadow-sm flex justify-between items-start gap-2 text-xs';
         card.innerHTML = `
@@ -746,6 +772,7 @@
             <div class="flex items-center gap-1.5 flex-wrap">
               <span class="font-bold text-quest-textDark">${formattedDate}</span>
               ${isPerfect ? '<span class="bg-amber-100 text-amber-800 text-[10px] font-extrabold px-1.5 py-0.2 rounded-full border border-amber-300 shrink-0">Perfect Day ⭐</span>' : ''}
+              ${weightTag}
               <button onclick="openEditModal('${date}')" class="text-quest-textMuted hover:text-quest-dark p-0.5 rounded transition" title="Editar este dia">
                 <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
               </button>
