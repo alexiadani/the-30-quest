@@ -172,6 +172,25 @@
         <i data-lucide="shopping-bag" class="w-4 h-4 text-quest-dark"></i> Lista de Prêmios
       </h2>
 
+        <div class="flex justify-between items-center p-3 bg-quest-cardLight border border-quest-pink2 rounded-xl shadow-sm">
+          <div>
+            <p class="text-sm font-semibold"><a href="https://shopee.com.br/Cozedor-Aquecedor-Port%C3%A1til-para-at%C3%A9-7-Ovos-El%C3%A9trico-220V-Pr%C3%A1tico-Cozinha-i.1309442898.22093291651?extraParams=%7B%22display_model_id%22%3A239442488438%2C%22model_selection_logic%22%3A3%7D" target="_blank" class="hover:underline">Cozedor de ovos</a></p>
+            <p class="text-xs text-quest-textMuted">Shopee • R$ 29,99</p>
+          </div>
+          <button onclick="redeemReward(29.99, 'Shopee')" class="px-3 py-1.5 bg-quest-dark hover:bg-quest-pink4 active:scale-95 text-xs font-bold text-white rounded-lg transition shadow-sm">Resgatar</button>
+        </div>
+      </div>
+
+
+        <div class="flex justify-between items-center p-3 bg-quest-cardLight border border-quest-pink2 rounded-xl shadow-sm">
+          <div>
+            <p class="text-sm font-semibold"><a href="https://shopee.com.br/El%C3%A1stico-Extensor-kit-3-Mini-Bands-Faixas-de-Resist%C3%AAncia-para-Exerc%C3%ADcios-Fitness-Academia-Yoga-Pilates-i.1589350304.22095198501?extraParams=%7B%22display_model_id%22%3A238811033991%2C%22model_selection_logic%22%3A3%7D" target="_blank" class="hover:underline">Extensor + 3 Mini Bands</a></p>
+            <p class="text-xs text-quest-textMuted">Shopee • R$ 34,99</p>
+          </div>
+          <button onclick="redeemReward(34.99, 'Shopee')" class="px-3 py-1.5 bg-quest-dark hover:bg-quest-pink4 active:scale-95 text-xs font-bold text-white rounded-lg transition shadow-sm">Resgatar</button>
+        </div>
+      </div>
+
       <div class="grid grid-cols-1 gap-2.5">
         <div class="flex justify-between items-center p-3 bg-quest-cardLight border border-quest-pink2 rounded-xl shadow-sm">
           <div>
@@ -180,6 +199,24 @@
           </div>
           <button onclick="redeemReward(39.99, 'Tornozeleira com elástico')" class="px-3 py-1.5 bg-quest-dark hover:bg-quest-pink4 active:scale-95 text-xs font-bold text-white rounded-lg transition shadow-sm">Resgatar</button>
         </div>
+
+        <div class="flex justify-between items-center p-3 bg-quest-cardLight border border-quest-pink2 rounded-xl shadow-sm">
+          <div>
+            <p class="text-sm font-semibold"><a href="https://shopee.com.br/PAR-Caneleira-de-Peso-Tornozeleira-Muscula%C3%A7ao-Ginastica-Exercicios-Treino-Profissional-Academia-i.329230503.19997627950?extraParams=%7B%22display_model_id%22%3A209160786588%2C%22model_selection_logic%22%3A3%7D" target="_blank" class="hover:underline">Caneleira de Peso 5kg</a></p>
+            <p class="text-xs text-quest-textMuted">Shopee • R$ 47,00</p>
+          </div>
+          <button onclick="redeemReward(47.00, 'Shopee')" class="px-3 py-1.5 bg-quest-dark hover:bg-quest-pink4 active:scale-95 text-xs font-bold text-white rounded-lg transition shadow-sm">Resgatar</button>
+        </div>
+      </div>
+
+        <div class="flex justify-between items-center p-3 bg-quest-cardLight border border-quest-pink2 rounded-xl shadow-sm">
+          <div>
+            <p class="text-sm font-semibold"><a href="https://shopee.com.br/Kit-02-Espelhos-para-Porta-de-Guarda-Roupa-Correr-e-Abrir-de-Madeira-i.580683083.15450583192?extraParams=%7B%22display_model_id%22%3A96850088017%2C%22model_selection_logic%22%3A3%7D" target="_blank" class="hover:underline">Espelhos para Porta</a></p>
+            <p class="text-xs text-quest-textMuted">Shopee • R$ 77,00</p>
+          </div>
+          <button onclick="redeemReward(77.00, 'Shopee')" class="px-3 py-1.5 bg-quest-dark hover:bg-quest-pink4 active:scale-95 text-xs font-bold text-white rounded-lg transition shadow-sm">Resgatar</button>
+        </div>
+      </div>
 
         <div class="flex justify-between items-center p-3 bg-quest-cardLight border border-quest-pink2 rounded-xl shadow-sm">
           <div>
@@ -197,6 +234,7 @@
           <button onclick="redeemReward(87.17, 'Kamaleão')" class="px-3 py-1.5 bg-quest-dark hover:bg-quest-pink4 active:scale-95 text-xs font-bold text-white rounded-lg transition shadow-sm">Resgatar</button>
         </div>
       </div>
+
     </section>
 
     <!-- Mapa dos 348 Dias Dividido por Meses -->
@@ -228,7 +266,7 @@
             <span class="w-2.5 h-2.5 rounded-full bg-quest-dark inline-block"></span>
             <span class="w-2 h-0.5 bg-quest-dark rounded-full mt-0.5"></span>
           </span>
-          Peso Medido ⚖️
+          Peso Medido ⚖️️
         </span>
       </div>
     </section>
@@ -593,7 +631,7 @@
       const monthsData = {};
 
       while (currentCursor <= END_DATE) {
-        const dateKey = currentCursor.toISOString().split('T')[0];
+        const dateKey = `${currentCursor.getFullYear()}-${String(currentCursor.getMonth() + 1).padStart(2, '0')}-${String(currentCursor.getDate()).padStart(2, '0')}`;
         
         const monthShort = currentCursor.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '').toLowerCase();
         const yearShort = currentCursor.toLocaleDateString('pt-BR', { year: '2-digit' });
@@ -606,6 +644,7 @@
         monthsData[monthLabel].push({
           dateKey,
           dayNumber: currentCursor.getDate(),
+          dayOfWeek: currentCursor.getDay(), // 0 = Dom, 1 = Seg, ..., 6 = Sáb
           journeyDayNum: dayCounter
         });
 
@@ -613,6 +652,8 @@
         dayCounter++;
         totalJourneyDaysCount++;
       }
+
+      const weekDayLabels = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
 
       Object.entries(monthsData).forEach(([monthLabel, daysList]) => {
         const monthCard = document.createElement('div');
@@ -628,8 +669,25 @@
         `;
         monthCard.appendChild(monthHeader);
 
+        // Grid com cabeçalho dos dias da semana
         const grid = document.createElement('div');
         grid.className = "grid grid-cols-7 gap-1.5 pt-1 justify-items-center";
+
+        // Renderiza as siglas dos dias da semana
+        weekDayLabels.forEach(label => {
+          const dayHeaderLabel = document.createElement('span');
+          dayHeaderLabel.className = "text-[9px] font-bold text-quest-textMuted/80 lowercase pb-1 select-none";
+          dayHeaderLabel.textContent = label;
+          grid.appendChild(dayHeaderLabel);
+        });
+
+        // Preenche com colunas vazias se o primeiro dia do mês não for domingo
+        const firstDayOfWeek = daysList[0].dayOfWeek;
+        for (let i = 0; i < firstDayOfWeek; i++) {
+          const emptySlot = document.createElement('div');
+          emptySlot.className = "w-7 h-8";
+          grid.appendChild(emptySlot);
+        }
 
         daysList.forEach(dayItem => {
           const habits = appState.historicoDiario[dayItem.dateKey];
@@ -638,7 +696,6 @@
           const isPast = dayItem.dateKey <= TODAY_KEY;
           const hasWeight = habits && habits.peso !== null && habits.peso !== undefined && habits.peso > 0;
 
-          // Contêiner wrapper flexível para alinhar a bolinha e o traço de peso logo abaixo
           const wrapper = document.createElement('div');
           wrapper.className = "flex flex-col items-center justify-start h-8 w-7";
 
@@ -689,7 +746,6 @@
 
           wrapper.appendChild(btn);
 
-          // Barrinha traço horizontal logo abaixo da bolinha quando há peso registrado
           if (hasWeight) {
             const bar = document.createElement('span');
             bar.className = "w-3.5 h-0.5 bg-quest-dark rounded-full mt-0.5 shrink-0";
